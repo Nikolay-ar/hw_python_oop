@@ -59,8 +59,9 @@ class Running(Training):
 
     def get_spent_calories(self) -> float:
         """Получить количество затраченных калорий."""
-        res_first = (self.COEFF_CALORIE_1 * self.get_mean_speed() - self.COEFF_CALORIE_2) * self.weight
-        return res_first / self.M_IN_KM * self.duration * self.H_IN_MIN
+        res_first = self.COEFF_CALORIE_1 * self.get_mean_speed()
+        res_second = (res_first - self.COEFF_CALORIE_2) * self.weight
+        return res_second / self.M_IN_KM * self.duration * self.H_IN_MIN
 
 
 class SportsWalking(Training):
@@ -74,8 +75,10 @@ class SportsWalking(Training):
 
     def get_spent_calories(self) -> float:
         """Получить количество затраченных калорий."""
-        res_first = (self.get_mean_speed() ** 2 // self.height) * self.COEFF_CALORIE_2 * self.weight
-        return (self.COEFF_CALORIE_1 * self.weight + res_first + res_first) * self.duration * self.H_IN_MIN
+        res_first = self.get_mean_speed() ** 2 // self.height
+        res_second = res_first * self.COEFF_CALORIE_2 * self.weight
+        res_third = self.COEFF_CALORIE_1 * self.weight + res_second
+        return res_third * self.duration * self.H_IN_MIN
 
 
 class Swimming(Training):
@@ -95,20 +98,22 @@ class Swimming(Training):
 
     def get_mean_speed(self) -> float:
         """Получить среднюю скорость движения."""
-        return self.length_pool * self.count_pool / self.M_IN_KM / self.duration
+        res_first = self.length_pool * self.count_pool
+        return  res_first / self.M_IN_KM / self.duration
 
     def get_spent_calories(self) -> float:
         """Получить количество затраченных калорий."""
-        return (self.get_mean_speed() + self.COEFF_CALORIE_1) * self.COEFF_CALORIE_2 * self.weight
+        res_first = self.get_mean_speed() + self.COEFF_CALORIE_1
+        return res_first * self.COEFF_CALORIE_2 * self.weight
 
 
-def read_package(workout_type: str, data: list) -> Optional[Training]:  # Зашло ('SWM', [720, 1, 80, 25, 40])
+def read_package(workout_type: str, data: list) -> Optional[Training]:
     """Прочитать данные полученные от датчиков."""
     workout_type_dict: Dict[str, Type[Training]] = {'SWM': Swimming,
                                                     'RUN': Running,
                                                     'WLK': SportsWalking}
     try:
-        return workout_type_dict[workout_type](*data)  # Выход (Swimming, [720, 1, 80, 25, 40])
+        return workout_type_dict[workout_type](*data)
     except KeyError as e:
         print(e)
 
