@@ -99,7 +99,7 @@ class Swimming(Training):
     def get_mean_speed(self) -> float:
         """Получить среднюю скорость движения."""
         res_first = self.length_pool * self.count_pool
-        return  res_first / self.M_IN_KM / self.duration
+        return res_first / self.M_IN_KM / self.duration
 
     def get_spent_calories(self) -> float:
         """Получить количество затраченных калорий."""
